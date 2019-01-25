@@ -1,5 +1,5 @@
 {
-  "name": "plug-it",
+  "name": "code-plug",
   "version": "0.0.1",
   "description": "Plugin architecture",
   "main": "index.js",

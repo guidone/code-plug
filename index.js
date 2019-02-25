@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import _ from 'lodash';
 
 const PlugItContext = React.createContext({
   plugins: []
@@ -16,6 +17,7 @@ const isPlugin = obj => {
 // todo generate id aut
 // todo add prop-types libyarn d
 
+const maybe = obj => obj != null ? obj : [];
 
 class CodePlug extends React.Component {
 
@@ -25,15 +27,16 @@ class CodePlug extends React.Component {
     this.getItems = this.getItems.bind(this);
 
     const hooks = this.getHooks();
-    let { plugins, ...newProps } = this.props;
+    const { plugins, ...newProps } = this.props;
 
-    plugins = (plugins || [])
+    const filteredPlugins = (plugins || [])
       .filter(plugin => isPlugin(plugin))
       .filter(plugin => this.filterWith(hooks, plugin))
       .map(plugin => new plugin(newProps));
 
     this.state = {
-      plugins
+      plugins: filteredPlugins,
+      allPlugins: plugins
     };
   }
 
@@ -46,7 +49,6 @@ class CodePlug extends React.Component {
 
     });
     return result;
-
   }
 
   getHooks() {
@@ -55,11 +57,19 @@ class CodePlug extends React.Component {
       .filter(plugin => isFunction(plugin) && !isPlugin(plugin));
   }
 
+  getPlugins() {
+    return this.state.plugins;
+  }
+
+  getAllPlugins() {
+    return this.state.allPlugins;
+  }
+
   getItems(region) {
     const { plugins } = this.state;
 
     return plugins
-      .map(plugin => plugin.getViews(region))
+      .map(plugin => maybe(plugin.getViews(region)).map(item => ({ ...item, plugin }))) // enrich with plugin
       .reduce((a, v) => a.concat(v), []) //flatten
       .filter(Boolean); //compact
   }
@@ -70,13 +80,28 @@ class CodePlug extends React.Component {
     const { plugins } = this.state;
 
     return (
-      <PlugItContext.Provider value={{ plugins, getItems: this.getItems }}>
+      <PlugItContext.Provider value={{ plugins, getItems: this.getItems, codePlug: this }}>
         {this.props.children}
       </PlugItContext.Provider>
     );
   }
 }
 
+class Consumer extends React.Component {
+
+  static contextType = PlugItContext;
+
+  render() {
+
+    const { codePlug } = this.context;
+
+    return (
+      <Fragment>
+        {isFunction(this.props.children) ? this.props.children(codePlug) : this.props.children}
+      </Fragment>
+    );
+  }
+}
 
 const generateKey = (view, options) => {
   const id = options != null && options.id != null ? `-${options.id}` : '';
@@ -96,7 +121,7 @@ const generateKey = (view, options) => {
   } else {
     console.log(
       `Both the "namespace" and "displayName" properties were missing from a registered view,
-    it's needed to generate the correct key reference for child components in React`
+      it's needed to generate the correct key reference for child components in React`
     );
   }
 };
@@ -107,8 +132,20 @@ class Views extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     style: PropTypes.object,
-    region: PropTypes.string.isRequired
+    region: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array
+    ]).isRequired
   };
+
+  getPlugins() {
+    return [
+      { label:'aa '},
+      { label:'bb '}
+
+    ];
+
+  }
 
   render() {
     const { region, className, style, children: renderProp } = this.props;
@@ -121,7 +158,7 @@ class Views extends React.Component {
           const props = { ...item.props };
           const View = item.view;
           if (typeof renderProp === 'function') {
-            return renderProp(View, { key: generateKey(View, item.props), ...rest, ...props });
+            return renderProp(View, { key: generateKey(View, item.props), ...rest, ...props }, plugin);
           } else {
             return <View key={generateKey(View, item.props)} {...rest} {...props} />;
           }
@@ -130,17 +167,36 @@ class Views extends React.Component {
       .reduce((a, v) => a.concat(v), []) //flatten
       .filter(Boolean); //compact
 
-    return (
-      <div className={classNames(className)} style={style}>
-        {dom}
-      </div>
-    );
-
+    return <Fragment>{dom}</Fragment>;
   }
 }
 
+class Items extends React.Component {
+  static contextType = PlugItContext;
 
+  render() {
 
+    const { region, className, style, children: renderProp } = this.props;
+    // eslint-disable-next-line no-unused-vars
+    const { region: _region, ...rest } = this.props;
+    const { plugins } = this.context;
+
+    const collection = plugins
+      .map(plugin => {
+        return (plugin.getViews(region) || []).map(item => {
+          return {
+            ...item,
+            plugin
+          };
+        });
+
+      })
+      .reduce((a, v) => a.concat(v), []) //flatten
+      .filter(Boolean); //compact
+
+    return <Fragment>{renderProp(collection)}</Fragment>;
+  }
+}
 
 class Plugin {
 
@@ -165,7 +221,10 @@ class Plugin {
   }
 
   getViews(region) {
-    return this._views[region];
+    const regions = _.isArray(region) ? region : [region];
+    return regions
+      .reduce((acc, region) => this._views[region] != null ? [...acc, ...this._views[region]] : acc, [])
+      .filter(Boolean); //compact
   }
 }
 
@@ -183,4 +242,4 @@ const PlugItUserPermissions = function(plugin) {
 
 
 
-export { PlugItContext as context, CodePlug, Views, Plugin, PlugItUserPermissions };
+export { PlugItContext as context, CodePlug, Consumer, Views, Items, Plugin, PlugItUserPermissions };

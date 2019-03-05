@@ -6,12 +6,12 @@
 
 
 **CodePlug** is not a UI component and is not a framework, it's just a way to organize the code in order to fight the **monolith**.
-Every long term project has the same enemy: the complexity. Soon or later, feature after feature, the code base looks like a monolith: components and features become tightly coupled, impossible to remove old feature and dead code and adding new features introduces new bugs.
 
-Have you ever esitated of deleting old graphic assets from Christmas 2010 since your afraid that something might still use it? If the answer is yes, then **CodePlug** is for you.
+**What's a monolith?** Every long term project has the same enemy: the complexity. Soon or later, feature after feature, the code base looks like a monolith: components and features become tightly coupled, impossible to remove old feature and dead code and adding new features introduces new bugs.
 
-How do you fight the monolith? With the _plugin-first_ method.
-The plugin-first method has 3 simple rules
+Have you ever esitated of deleting old graphic assets from _Christmas 2010_ since your afraid that something might still use it? If the answer is yes, then **CodePlug** is for you.
+
+How do you fight the monolith? With the _plugin-first_ method.The plugin-first method has 3 simple rules
 
 1. Every feature is a plugin
 2. All files related to a plugin are packaged in the same folder
@@ -77,14 +77,16 @@ class App extends React.Component {
   }
 }
 ```
+Please note that:
+* Plugins can register any number of views for any region name, could be a simple button or an entire page 
+* Every parameter used in the registration will be passed as props to the view when it will be rendered
+* In order to manage which features/plugins are present in the app, just pass an array of plugin-class in `plugins`: how you do it (based on permissions, environment, etc) is up to you and it's out of the scope of **CodePlug**
+* `PluginViews` it's just an helper that collect views for a named region and render them, every props (except _"region"_) will be passed to the rendered views
+* What if you need an UI element present in another plugin? This is a **component**, something that you can re-use through the app and should be placed elsewhere (for example _/ui_), a **plugin** is something that you can remove from the app without breaking it
 
-Plugins can register any number of views for any region name, could be a simple button or an entire page. 
-Every parameter used in the registration will be passed as props to the view when it will be rendered.
-In order to manage which features/plugins are loaded in the app, just handle the array passed to the prop `plugins`: how you do it based on permissions, environment, etc is up to you and it's out of the scope of CodePlug.
-`PluginViews` it's just an helper that collect views for a named region and render them, every props (except _"region"_) will be passed to the rendered views.
-
-**You also get long term advantages with this approach:** think again at the example of the buttons, months after months of coding things with these buttons are going to get complicated, they can be visible or not - or just disabled - for various reasons (domain logic, permission logic, environment logic). With the plugin-first method the *why* is defined in the plugin at the highest level of your code (for example a button is disabled since the user has not the permission) and the *how* is defined in the views at the lowest level of the code (for example a button looks disabled with a simple CSS rule).
+**You also get long term advantages with this approach**: think again at the example of the buttons, months after months of coding things with these buttons are going to get complicated, they can be visible or not - or just disabled - for various reasons (domain logic, permission logic, environment logic). With the plugin-first method the *why* is defined in the plugin at the highest level of your code (for example a button is disabled since the user has not the permission) and the *how* is defined in the views at the lowest level of the code (for example a button looks disabled with a simple CSS rule).
 You are never going to mix these two, the behaviour of the buttons will always be very easy to inspect ad the top level of your code and well separated by the implementation detail of the button (for example how it's rendered when disabled).
+
 
 Let's make a more complicated example with these buttons: now the button should be present only if the user has the related permission and must be disabled based on some domain logic (for example you cannot archive a blog post which is already archived)
   

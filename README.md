@@ -1,6 +1,8 @@
-![CodePlug](https://github.com/guidone/code-plug/blob/master/images/code_plug.png)
+<p align="center">
+  <img width="468" height="108" src="https://github.com/guidone/code-plug/blob/master/images/code_plug.png"><br/>
+  <b>Fight the Monolith</b>
+</p>
 
-**Fight the Monolith**
 
 ** This is a work in progress **
 

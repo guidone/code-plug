@@ -228,26 +228,50 @@ tbd
 
 ## API Reference
 
-Plugin
+### Plugin Class
 
 | Method | Params | Description |
 | --- | --- | --- |
-| register(region, [view,] [props]) | Plugin | Register a view | 
+| register(region[, view][, props]) | plugin | Register a view and or a set of properties for a _region_ (mandatory) | 
 
-CodePlug properties
+### CodePlug
+
+Properties:
+
+| Property | Params | Description |
+| --- | --- | --- |
+| plugins | [Plugin] | List of plugin classes to be instantiated | 
+| debug | Boolean | Show some debug information about the behaviour of _hooks_ |
+
+Methods
 
 | Method | Params | Description |
 | --- | --- | --- |
-| region | String / [String] | ...  | 
-| debug | Boolean | ... | 
-| plugins | [Plugin] | List of installed plugin | 
-
-
-| Method | Params | Description |
-| --- | --- | --- |
-| getItems(region[, props]) | [Items] | Get items for a region | 
+| getItems(region[, props]) | [Items] | Get all items for a region, return an array of items  | 
 | getPlugins | [plugin] | List of installed plugins | 
 | getAllPlugins | [Plugin] | List of all plugin classes | 
+
+Items
+
+| Value | Params | Description |
+| --- | --- | --- |
+| view | React | The React view |
+| props | Object | The evaluated props associated with the view, it's the merge of the props registered statically or dinamically with the _.register()_ method the the ones passed by the `Views`, `Items` tag or _.getItems()_ method |
+| plugin | Plugin | The plugin instance that registered the view |
+
+### Views
+
+| Property | Params | Description |
+| --- | --- | --- |
+| region | String / [String] | Render all views associated with the region(s) | 
+
+### Items
+
+| Property | Params | Description |
+| --- | --- | --- |
+| region | String / [String] | Get all items associated with the region(s) | 
+
+
 
 
 

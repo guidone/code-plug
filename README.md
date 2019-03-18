@@ -171,17 +171,83 @@ To the render props are passed these arguments: the registered React view, the r
 
 ## Key Prop
 
-The `<PluginViews>` returns an array of React views, each view must have a distinct `key` prop (as per React requirement). *CodePlug* is able to resolve this prop using the static properties of the registered view (the component name or the `displayName` property).
-There is a corner case in which the plugin register the same class view with different props (the button example above), in this case just include an `id` key in the registered prop (`id: 'archive'`) 
+The `<PluginViews>` returns an array of **React** views, each view must have a distinct `key` prop (as per **React** requirement). **CodePlug** is able to resolve this prop using the static properties of the registered view (the component name or the `displayName` property).
+
+There is a corner case in which the plugin register the same class view with different props (the `<button>` in the example above), in this case just include an `id` key in the registered prop (`id: 'archive'`) to generate different keys for the same component class. 
 
 ## Items helper
 
-tbd
+Sometimes it's needed to get items for a particular _region_ without a render
+
+```javascript
+render() {
+  return (
+    <Items region="my_region" my_prop="42">
+      {items => items.map(({ view, props, plugin}) => {
+          // do something useful
+          // view - the registered view
+          // props - merge of registered props and Items prop (includes my_prop = 42)
+          // plugin - the instance of the plugin
+        });
+      }}
+    </Items>
+  );
+}
+```
+
+the same helper is available as method in **CodePlug**, the code above could be also written 
+
+```javascript
+
+render() {
+  return (
+    <CodePlug 
+      ref={ref => this.codePlug = ref}
+      plugins={[FilterByPermission, ArchiveButton, DeleteButton]}
+      user={currentUser} // has a permissions[] field
+    >
+      {this.codePlug
+        .getItems('my_region', { my_prop: 42})
+        .map(({ view, props, plugin}) => {
+          // do something useful
+          // view - the registered view
+          // props - merge of registered props and Items prop (includes my_prop = 42)
+          // plugin - the instance of the plugin
+        })
+      }
+      // do something useful
+    </CodePlug>
+  );
+}
+```
+
 
 ## Hooks
 
 tbd
 
-## Methods
+## API Reference
 
-tbd
+Plugin
+
+| Method | Params | Description |
+| --- | --- | --- |
+| register(region, [view,] [props]) | Plugin | Register a view | 
+
+CodePlug properties
+
+| Method | Params | Description |
+| --- | --- | --- |
+| region | String / [String] | ...  | 
+| debug | Boolean | ... | 
+| plugins | [Plugin] | List of installed plugin | 
+
+
+| Method | Params | Description |
+| --- | --- | --- |
+| getItems(region[, props]) | [Items] | Get items for a region | 
+| getPlugins | [plugin] | List of installed plugins | 
+| getAllPlugins | [Plugin] | List of all plugin classes | 
+
+
+

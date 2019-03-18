@@ -221,10 +221,26 @@ render() {
 }
 ```
 
-
 ## Hooks
 
-tbd
+A _hook_ is special plugin that filter which plugin is actually instantiated in *CodePlug*. For example to load only the set of plugins the current user has access to:
+
+```javascript
+function(plugin) {
+  const { user, debug } = this.props || {};
+  const permission = plugin != null && plugin.prototype != null && plugin.prototype.constructor != null ?
+    plugin.prototype.constructor.permission : null;
+  if (user != null && user.permissions != null && user.permissions.includes(permission)) {
+    return true;
+  }
+  if (debug) {
+    console.log(`Plugin ${plugin != null ? plugin.name : 'unnamed'} not loaded, missing ${permission}!`);
+  }
+}
+```
+* Every plugin has a _permission_ property
+* The object _user_ passed to `<CodePlug>` has a property _permissions_ (array of strings)
+* If the function returns a truthy value, then the plugin is instantiated, otherwise is discarded
 
 ## API Reference
 
@@ -247,17 +263,9 @@ Methods
 
 | Method | Params | Description |
 | --- | --- | --- |
-| getItems(region[, props]) | [Items] | Get all items for a region, return an array of items  | 
+| getItems(region[, props]) | [Item] | Get all items for a region, return an array of items  | 
 | getPlugins | [plugin] | List of installed plugins | 
 | getAllPlugins | [Plugin] | List of all plugin classes | 
-
-Items
-
-| Value | Params | Description |
-| --- | --- | --- |
-| view | React | The React view |
-| props | Object | The evaluated props associated with the view, it's the merge of the props registered statically or dinamically with the _.register()_ method the the ones passed by the `Views`, `Items` tag or _.getItems()_ method |
-| plugin | Plugin | The plugin instance that registered the view |
 
 ### Views
 
@@ -271,7 +279,17 @@ Items
 | --- | --- | --- |
 | region | String / [String] | Get all items associated with the region(s) | 
 
+### Item
 
+| Value | Params | Description |
+| --- | --- | --- |
+| view | React | The React view |
+| props | Object | The evaluated props associated with the view, it's the merge of the props registered statically or dinamically with the _.register()_ method the the ones passed by the `Views`, `Items` tag or _.getItems()_ method |
+| plugin | Plugin | The plugin instance that registered the view |
 
+## Examples
+
+[Mqtt Client](https://github.com/guidone/mqtt-client) is a small MQTT desktop client, its purpose is to listen for multiple MQTT topics and trigger some actions on a desktop computer and plot data on a map.
+It's based on [Electron](https://electronjs.org/) and has a _plugin-first_ architecture: every rules and action that can be applied to an incoming message is defined in plugins that can be added, removed, etc. 
 
 

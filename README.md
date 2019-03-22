@@ -3,15 +3,11 @@
   <b>Fight the Monolith</b>
 </p>
 
-
-** This is a work in progress **
-
-
 **CodePlug** is not a UI component and is not a framework, it's just a way to organize the code in order to fight the **monolith**.
 
-**What's a monolith?** Every long term project has the same enemy: the complexity. Soon or later, feature after feature, the code base looks like a monolith: components and features become tightly coupled, old features are impossible to remove, dead code is everywhere and introducing new features it's complex and bug prone.
+**What's a monolith?** Every long term project has the same enemy: the complexity. Soon or later, feature after feature, the code base slowly tends towards a unique conglomerate of code: components and features become tightly coupled, old features are impossible to remove, dead code is everywhere and introducing new features it's complex and bug prone.
 
-Have you ever hesitated to delete old graphic assets from _Christmas 2010_ since your afraid that something might still use it? If the answer is yes, then **CodePlug** is for you.
+Have you ever hesitated to delete old graphic assets from _Christmas 2010_ since your afraid that something might still use it? Do you use CSS class names to find the right feature in your code base? If the answer is yes, then **CodePlug** is for you.
 
 How do you fight the monolith? With the _plugin-first_ method.The *plugin-first* method has 3 simple rules
 

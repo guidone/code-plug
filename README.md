@@ -18,13 +18,13 @@ How do you fight the monolith? With the _plugin-first_ method.The *plugin-first*
 With the _plugin-first_ method you get:
 
 * Removing dead code it's easy: if the feature is gone, then we can remove safely the whole directory and - thanks to rule #3 - your application will not break
-* No need to "hide" features based on user permissions, just don't load the plugin (and the app will not break)
+* No need to _"hide"_ features based on user permissions, just don't load the plugin (and the app will not break)
 * No need to disable plugin based on the environment, just don't load the plugin in that environment (and the app will not break)
 * Do you need to expose some features to a restricted set of beta users? Just load the plugin for these users
 * Multiple version of the same app with different set of features ... you know the answer
 
 How does it work?
-It looks like a mediator pattern: each plugin registers one or more *React* views under some _"regions"_. A simple helper collects all the registered views for a _"region"_ and renders them.
+It looks like a mediator pattern: each plugin registers one or more *React* views under a _"region"_. A simple helper collects all the registered views for a _"region"_ and renders them.
 Here is the trick: the features definition is totally decoupled from its instantiation and that makes your code more robust, if the plugin is not loaded the feature it's simply not there: nothing can break the app if it's not present.
 
 Let's make an example with a very simple button bar:

@@ -7,7 +7,7 @@
 
 **What's a monolith?** Every long term project has the same enemy: the complexity. Soon or later, feature after feature, the code base slowly tends towards a unique conglomerate of code: components and features become tightly coupled, old features are hard to remove, dead code is everywhere and introducing new features it's complex and bug prone.
 
-Have you ever hesitated to delete old graphic assets from _Christmas 2010_ since your afraid that something might still use it? Do you use CSS class names to find the right feature in your code base? If the answer is yes, then **CodePlug** is for you.
+**Have you ever hesitated to delete old graphic assets from _Christmas 2010_ since your afraid that something might still use it? Do you use CSS class names to find the right feature in your code base? If the answer is yes, then CodePlug is for you.**
 
 How do you fight the monolith? With the _plugin-first_ method.The *plugin-first* method has 3 simple rules
 
@@ -84,7 +84,7 @@ Consider that:
 **You also get long term advantages with this approach**: think again at the example of the buttons, months after months of coding things with these buttons are going to get complicated, they can be visible or not - or just disabled - for various reasons (domain logic, permission logic, environment logic). With the plugin-first method the *why* is defined in the plugin at the highest level of your code (for example a button is disabled since the user has not the permission) and the *how* is defined in the views at the lowest level of the code (for example a button looks disabled with a simple CSS rule).
 You are never going to mix these two, the behaviour of the buttons will always be very easy to inspect ad the top level of your code and well separated by the implementation detail of the button (for example how it's rendered when disabled).
 
-Let's make a more complicated example with these buttons: now the button should be present only if the user has the related permission and must be disabled based on some domain logic (for example you cannot archive a blog post which is already archived)
+Let's take the example above and complicate it a little: now the buttons should be present only if the user has the related permission and must be disabled based on some domain logic (for example you cannot archive a blog post which is already archived)
   
 ```javascript
 import { Plugin, CodePlug, PluginViews, FilterByPermission } from 'code-plug';

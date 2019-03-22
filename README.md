@@ -3,7 +3,7 @@
   <b>Fight the Monolith</b>
 </p>
 
-**CodePlug** is not a UI component and is not a framework, it's just a way to organize the code in order to fight the **monolith**.
+**CodePlug** is not a UI component library and is not a framework, it's just a way to organize the code in order to fight the **monolith**.
 
 **What's a monolith?** Every long term project has the same enemy: the complexity. Soon or later, feature after feature, the code base slowly tends towards a unique conglomerate of code: components and features become tightly coupled, old features are impossible to remove, dead code is everywhere and introducing new features it's complex and bug prone.
 

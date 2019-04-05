@@ -36,7 +36,7 @@ import { Button } from 'my-ui-lib';
 class RedButton extends Plugin {
   constructor(props) {
     super(props);
-    this.registerView('my_buttons', Button, {
+    this.register('my_buttons', Button, {
       id: 'red',
       label: 'Red',
       style: { background-color: '#FF0000' } 
@@ -47,7 +47,7 @@ class RedButton extends Plugin {
 class BlueButton extends Plugin {
   constructor(props) {
     super(props);
-    this.registerView('my_buttons', Button, {
+    this.register('my_buttons', Button, {
       id: 'blue',
       label: 'Blue',
       style: { background-color: '#0000FF' } 
@@ -94,7 +94,7 @@ class ArchiveButton extends Plugin {
   static permission = 'canArchive';
   constructor(props) {
     super(props);
-    this.registerView('my_buttons', Button, ({ blogPost }) => ({
+    this.register('my_buttons', Button, ({ blogPost }) => ({
       id: 'archive',
       label: 'Archive',
       disabled: blogPost.archived,
@@ -107,7 +107,7 @@ class DeleteButton extends Plugin {
   static permission = 'canDelete';
   constructor(props) {
     super(props);
-    this.registerView('my_buttons', Button, ({ blogPost }) => ({
+    this.register('my_buttons', Button, ({ blogPost }) => ({
       id: 'delete',
       label: 'Delete',
       disabled: blogPost.deleted,

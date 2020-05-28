@@ -1,6 +1,6 @@
 {
   "name": "code-plug",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Plugin architecture",
   "main": "index.js",
   "scripts": {

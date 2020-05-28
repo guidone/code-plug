@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import isFunction from '../helpers/is-function';
 import generateKey from '../helpers/generate-key';
 import PlugItContext from '../context';
+import { anonymousViews } from './plug';
+
 
 class Views extends React.Component {
   static contextType = PlugItContext;
@@ -35,7 +37,18 @@ class Views extends React.Component {
       .reduce((a, v) => a.concat(v), []) //flatten
       .filter(Boolean); //compact
 
-    return <Fragment>{dom}</Fragment>;
+
+    const domAnonymous = (anonymousViews[region] || []).map(item => {
+      const props = isFunction(item.props) ? item.props(rest) : { ...item.props };
+      const View = item.view;
+      if (typeof renderProp === 'function') {
+        return renderProp(View, { key: generateKey(View, props), ...rest, ...props });
+      } else {
+        return <View key={generateKey(View, props)} {...rest} {...props} />;
+      }
+    });
+
+    return <Fragment>{[...dom, ...domAnonymous]}</Fragment>;
   }
 }
 

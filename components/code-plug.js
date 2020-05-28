@@ -2,8 +2,20 @@ import React from 'react';
 import isPlugin from '../helpers/is-plugin';
 import isFunction from '../helpers/is-function';
 import maybe from '../helpers/maybe';
-
+import { anonymousViews } from './plug';
 import PlugItContext from '../context';
+
+
+const filterWith = (hooks, plugin, props) => {
+  let result = true;
+  hooks.forEach(hook => {
+    if (result) {
+      result = !!hook.call({ props }, plugin);
+
+    }
+  });
+  return result;
+};
 
 class CodePlug extends React.Component {
 
@@ -11,7 +23,9 @@ class CodePlug extends React.Component {
 
   static defaultProps = {
     debug: false,
-    plugins: []
+    plugins: [],
+    hooks: [],
+    hash: plugins => plugins.length
   };
 
   constructor(props) {
@@ -19,29 +33,26 @@ class CodePlug extends React.Component {
 
     this.getItems = this.getItems.bind(this);
 
-    const hooks = this.getHooks();
-    const { plugins, ...newProps } = this.props;
-
-    const filteredPlugins = (plugins || [])
-      .filter(plugin => isPlugin(plugin))
-      .filter(plugin => this.filterWith(hooks, plugin))
-      .map(plugin => new plugin(newProps));
-
     this.state = {
-      plugins: filteredPlugins,
-      allPlugins: plugins
+      plugins: [],
+      allPlugins: []
     };
   }
 
-  filterWith(hooks, plugin) {
-    let result = true;
-    hooks.forEach(hook => {
-      if (result) {
-        result = !!hook.call(this, plugin);
-      }
+  static getDerivedStateFromProps = function(props, state) {    
+    const { plugins, hooks, hash, ...newProps } = props;
 
-    });
-    return result;
+    if (state == null || state.plugins == null || hash(state.allPlugins) !== hash(props.plugins)) {
+      const filteredPlugins = (plugins || [])
+        .filter(plugin => filterWith(hooks, plugin, props))
+        .map(plugin => new plugin(newProps));
+      return {
+        plugins: filteredPlugins,
+        allPlugins: [...plugins]
+      };
+    }
+
+    return null;
   }
 
   getHooks() {
@@ -58,10 +69,25 @@ class CodePlug extends React.Component {
     return this.state.allPlugins;
   }
 
+  debug() {
+    this.state.allPlugins.forEach(plugin => {
+      console.log('- ', plugin.description.name, `(id: ${plugin.description.id}, ver:${plugin.description.version})`)
+    });
+  }
+  
   getItems(region, props = null) {
     const { plugins } = this.state;
 
-    return plugins
+    const anonymousItems = maybe(anonymousViews[region])
+      .map(item => ({
+        view: item.view,
+        props: isFunction(item.props) ? item.props(props) : item.props,
+        plugin: null
+      }))
+      .reduce((a, v) => a.concat(v), []) //flatten
+      .filter(Boolean); //compact
+
+    const items = plugins
       .map(plugin => (
         maybe(plugin.getViews(region))
           .map(item => ({
@@ -72,16 +98,18 @@ class CodePlug extends React.Component {
       ) // enrich with plugin
       .reduce((a, v) => a.concat(v), []) //flatten
       .filter(Boolean); //compact
+
+    return [...anonymousItems, ...items];
   }
 
 
   render() {
-
     const { plugins } = this.state;
+    const { children } = this.props;
 
     return (
       <PlugItContext.Provider value={{ plugins, codePlug: this }}>
-        {this.props.children}
+        {isFunction(children) ? children(this) : children}
       </PlugItContext.Provider>
     );
   }

@@ -4,12 +4,32 @@
   "description": "Plugin architecture",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "build": "webpack --config webpack.js -p"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "peerDependencies": {
+    "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
-    "react": "^16.8.6"
+    "react": "^16.12.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-react": "^7.7.4",
+    "@webpack-cli/serve": "^0.2.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.3.1",
+    "file-loader": "^5.0.2",
+    "html-webpack-plugin": "^4.3.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.1",
+    "webpack": "^5.0.0-beta.16",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^4.2.2"
   }
 }

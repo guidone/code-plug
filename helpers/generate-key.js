@@ -1,6 +1,8 @@
 export default (view, options) => {
   const id = options != null && options.id != null ? `-${options.id}` : '';
-  if (
+  if (view != null && view.displayName != null) {
+    return `${view.displayName}${id}`;
+  } else if (
     view != null &&
     view.prototype != null &&
     view.prototype.constructor != null &&
